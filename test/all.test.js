@@ -20,12 +20,15 @@ beforeAll((done) => {
   const n2 = {ip: '127.0.0.1', port: 8001};
   const n3 = {ip: '127.0.0.1', port: 8002};
 
+  console.log("tracer 1 ")
   // First, stop the nodes if they are running
   let remote = {service: 'status', method: 'stop'};
   remote.node = n1;
   distribution.local.comm.send([], remote, (e, v) => {
+    console.log("tracer 2 ")
     remote.node = n2;
     distribution.local.comm.send([], remote, (e, v) => {
+      console.log("tracer 3 ")
       remote.node = n3;
       distribution.local.comm.send([], remote, (e, v) => {
       });
@@ -36,13 +39,21 @@ beforeAll((done) => {
   mygroupGroup[id.getSID(n2)] = n2;
   mygroupGroup[id.getSID(n3)] = n3;
 
+  console.log("tracer 4 ")
   // Now, start the base listening node
   distribution.node.start((server) => {
     localServer = server;
     // Now, start the nodes
     distribution.local.status.spawn(n1, (e, v) => {
+      console.log("Spawned n1");
+      if (e) console.error("Error spawning n1:", e);
       distribution.local.status.spawn(n2, (e, v) => {
+        console.log("Spawned n2");
+        if (e) console.error("Error spawning n2:", e);
         distribution.local.status.spawn(n3, (e, v) => {
+          console.log("Spawned n3");
+          if (e) console.error("Error spawning n3:", e);
+          console.log("Group Template: ", groupsTemplate)
           groupsTemplate({gid: 'mygroup'})
               .put('mygroup', mygroupGroup, (e, v) => {
                 done();
