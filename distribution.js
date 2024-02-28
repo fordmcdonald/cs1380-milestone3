@@ -48,5 +48,6 @@ module.exports = distribution;
 
 /* The following code is run when distribution.js is run directly */
 if (require.main === module) {
+  console.log("Starting up node distribution")
   distribution.node.start(global.nodeConfig.onStart);
 }

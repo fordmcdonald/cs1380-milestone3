@@ -56,6 +56,7 @@ beforeAll((done) => {
           console.log("Group Template: ", groupsTemplate)
           groupsTemplate({gid: 'mygroup'})
               .put('mygroup', mygroupGroup, (e, v) => {
+                console.log("DONE")
                 done();
               });
         });
@@ -76,6 +77,7 @@ afterAll((done) => {
 });
 
 test('(4 pts) all.comm.send(status.get(nid))', (done) => {
+  console.log("Running first test all.comm")
   const nids = Object.values(mygroupGroup).map((node) => id.getNID(node));
   const remote = {service: 'status', method: 'get'};
 

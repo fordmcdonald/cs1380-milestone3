@@ -1,6 +1,7 @@
 const http = require('http');
 const { fork } = require('child_process');
-const { createRPC } = require('../util/wire');
+const { createRPC, toAsync } = require('../util/wire');
+const { serialize } = require('../util/serialization')
 const id = require('../util/id');
 
 const status = {};
@@ -46,11 +47,13 @@ status.stop = function(callback) {
 };
 
 status.spawn = function(conf, callback) {
+  console.log("Status spawn")
   // Create an RPC from the callback
-  let rpcCallback = createRPC(callback);
+  let rpcCallback = toAsync(createRPC(callback));
 
   // Check if there is an existing onStart function
   if (conf.onStart) {
+    console.log("On Start spawn")
       // Save the original onStart
       let originalOnStart = conf.onStart;
       // Create a new function that calls the original onStart and the RPC callback
@@ -59,12 +62,13 @@ status.spawn = function(conf, callback) {
           rpcCallback.apply(null, arguments);
       };
   } else {
+    console.log("On Start spawn else")
       // If no onStart, use the RPC callback directly
       conf.onStart = rpcCallback;
   }
 
   // Serialize the conf object (simplified for demonstration)
-  let serializedConf = JSON.stringify(conf);
+  let serializedConf = serialize(JSON.stringify(conf));
 
   // Spawn the child process with the modified configuration
   const child = fork('../../distribution.js', [], {
@@ -72,7 +76,7 @@ status.spawn = function(conf, callback) {
   });
 
   callback(null, 'Child node has booted.');
-  
+
   // Listen for the child process to signal it has booted
   child.on('message', (msg) => {
       if (msg === 'booted') {
@@ -90,7 +94,5 @@ status.spawn = function(conf, callback) {
       console.log(`Child process exited with code ${code}`);
   });
 };
-
-// Replace './path/to/distribution.js' with the actual path to your script
 
 module.exports = status;

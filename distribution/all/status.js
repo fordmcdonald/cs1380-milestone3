@@ -2,7 +2,7 @@ const distribution = require('../../distribution');
 
 // Method to aggregate status from all nodes in a group
 const get = (groupName, callback) => {
-    this.distribution.groups.comm.send(groupName, { service: 'status', method: 'get' }, (err, results) => {
+    distribution.groups.comm.send(groupName, { service: 'status', method: 'get' }, (err, results) => {
     if (err) {
         callback(err, null);
     } else {
