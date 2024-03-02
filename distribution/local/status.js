@@ -1,7 +1,8 @@
 const http = require('http');
-const { fork } = require('child_process');
+const { spawn } = require('node:child_process');
 const { createRPC, toAsync } = require('../util/wire');
-const { serialize } = require('../util/serialization')
+const serialization = require('../util/serialization')
+const path = require('path');
 const id = require('../util/id');
 
 const status = {};
@@ -68,12 +69,10 @@ status.spawn = function(conf, callback) {
   }
 
   // Serialize the conf object (simplified for demonstration)
-  let serializedConf = serialize(JSON.stringify(conf));
+  //let serializedConf = serialize(JSON.stringify(conf));
 
   // Spawn the child process with the modified configuration
-  const child = fork('../../distribution.js', [], {
-      env: { ...process.env, NODE_CONFIG: serializedConf },
-  });
+  spawn('node', [path.join(__dirname, '../../distribution.js'), '--config', serialization.serialize(conf)]);
 
   callback(null, 'Child node has booted.');
 

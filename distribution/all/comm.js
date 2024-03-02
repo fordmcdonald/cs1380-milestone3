@@ -1,7 +1,7 @@
 const distribution = require('../../distribution');
   
 const send = (nodeIds, remote, callback) => {
-    console.log("RUNNING COMM SEND ALL ***********")
+    console.log("RUNNING COMM SEND ALL ***********", callback, remote)
     let responses = { values: {}, errors: {} };
     let responseCount = 0;
 
@@ -16,7 +16,7 @@ const send = (nodeIds, remote, callback) => {
         }
 
         // Check if all responses have been collected
-        if (responseCount === nodeIds.length) {
+        if (responseCount === Object.keys.nodeIds.length) {
             handleAllResponses(responses, callback);
         }
     });

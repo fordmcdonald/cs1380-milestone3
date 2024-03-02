@@ -1,4 +1,7 @@
 const id = require("../util/id");
+const fs = require('fs');
+const groupsTemplate = require('../all/groups')
+
 
 const groups = {};
 
@@ -14,6 +17,8 @@ const get = (groupName, callback) => {
 const put = (groupName, nodes, callback) => {
     console.log("RUNNING PUT ALL")
     groups[groupName] = nodes;
+
+    global.distribution[groupName] = { groups: groupsTemplate(groupName)}
     callback(null, groups[groupName]);
 };
 

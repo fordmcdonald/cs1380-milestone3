@@ -44,10 +44,12 @@ const distribution = {
 
 global.distribution = distribution;
 
-module.exports = distribution;
-
+console.log("Starting up node distribution")
 /* The following code is run when distribution.js is run directly */
 if (require.main === module) {
   console.log("Starting up node distribution")
   distribution.node.start(global.nodeConfig.onStart);
 }
+
+
+module.exports = distribution;

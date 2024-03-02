@@ -12,6 +12,7 @@ function addToGroup(groupName, node) {
     if (!groupNodesMapping[groupName]) {
         groupNodesMapping[groupName] = [];
     }
+    console.log("Adding node to groupNodesMapping: ", node)
     groupNodesMapping[groupName].push(node);
 }
 
@@ -32,11 +33,12 @@ function createGroupOperations(groupName) {
         },
 
         // Method to update group information on all nodes in the group
-        put(groupData, callback) {
+        put(groupName, groupData, callback) {
             // Iterate over groupData object and add each node to the group
             Object.keys(groupData).forEach(nodeID => {
                 const nodeData = groupData[nodeID];
-                addToGroup(groupName, nodeID, nodeData);
+                console.log("NODE DATA: ", nodeData)
+                addToGroup(groupName, nodeData);
             });
             _sendToGroup(groupName, 'put', groupData, callback);
         },
@@ -75,9 +77,16 @@ function _sendToGroup(groupName, method, data, callback) {
     const results = {};
     let completed = 0;
 
+    const dataToSend = {
+        groupName: groupName,
+        data: data,
+        // You might want to include other relevant information here
+    };
+
     nodes.forEach(node => {
-        console.log("Sending local comm data per node", node, nodes, distribution.local)
-        distribution.local.comm.send({ service: 'groups', method: method, data: data }, node, (err, result) => {
+        console.log("Sending local comm data per node", node, data, nodes.length)
+        console.log("DATA: ", data)
+        distribution.local.comm.send(dataToSend, { node: node, service: 'groups', method: method }, (err, result) => {
             console.log("Sending local comm data per node", node) 
             results[node.id] = err ? { error: err } : result;
             completed++;
